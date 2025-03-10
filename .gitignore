@@ -1,6 +1,5 @@
 node_modules/
 backend/__pycache__/
-backend/*.pth
 backend/*.csv
 .DS_Store
 .env
