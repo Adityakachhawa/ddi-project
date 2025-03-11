@@ -986,10 +986,28 @@ const ModelStyles = styled.div`
     background: rgba(99, 102, 241, 0.1);
     border-radius: 0.75rem;
 
-    @media (max-width: 480px) {
-      padding: 1rem;
-    }
   }
+
+  @media (max-width: 768px) {
+  .tech-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .tech-card {
+    padding: 1.25rem;
+  }
+}
+
+/* Mobile View (480px and below) */
+@media (max-width: 480px) {
+  .tech-grid {
+    grid-template-columns: 1fr;  /* Single column layout */
+    gap: 0.75rem;
+  }
+  .tech-card {
+    padding: 1rem;
+  }
+}
 
   .code-block {
     background: #1e1e1e;
@@ -1450,7 +1468,7 @@ def predict_interaction(drug_a, drug_b):
                 </div>
               </ModelStyles>
             </InputCard>
-          }/>
+          } />
           <Route path="/fun-and-learn" element={<FunAndLearn />} />
         </Routes>
 
