@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
-import { FiX, FiInfo, FiCode, FiBook, FiAlertTriangle, FiChevronRight, FiDatabase, FiCpu, FiShield, FiTwitter, FiLinkedin, FiGithub, FiMail, FiUsers, FiActivity } from 'react-icons/fi';
+import { FiX, FiInfo, FiCode, FiBook, FiAlertTriangle, FiChevronRight, FiDatabase, FiCpu, FiShield, FiTwitter, FiTerminal, FiMenu, FiLinkedin, FiGithub, FiMail, FiUsers, FiActivity } from 'react-icons/fi';
 import FunAndLearn from './component/FunAndLearn';
 import axios from 'axios';
 import { useRef } from 'react';
@@ -87,14 +87,97 @@ const Navbar = styled.nav`
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 700;
+    font-size: 1.5rem;
     
     a {
       text-decoration: none;
       color: inherit;
     }
   }
+
+  .desktop-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+
+    a {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--primary);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    
+    .desktop-links {
+      display: none;
+    }
+  }
 `;
 
+const MobileMenu = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 70%;
+  background: rgba(15, 23, 42, 0.98);
+  backdrop-filter: blur(15px);
+  padding: 2rem;
+  transform: translateX(${props => props.isOpen ? '0' : '100%'});
+  transition: transform 0.3s ease-in-out;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.1rem;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+`;
+
+const HamburgerButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+  z-index: 1002;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: ${props => props.isOpen ? 'block' : 'none'};
+`;
 const HeroSection = styled.div`
   background: var(--gradient);
   padding: 4rem 2rem;
@@ -438,12 +521,26 @@ const AboutStyles = styled.div`
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+  
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
   }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+}
 
   .about-hero {
     text-align: center;
     margin-bottom: 3rem;
     position: relative;
+
+    @media (max-width: 768px) {
+      margin-bottom: 2rem;
+    }
+
     
     h2 {
       font-size: 2.5rem;
@@ -452,7 +549,19 @@ const AboutStyles = styled.div`
       align-items: center;
       justify-content: center;
       gap: 1rem;
+    
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.75rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
     }
+
 
     .gradient-bar {
       height: 3px;
@@ -460,6 +569,11 @@ const AboutStyles = styled.div`
       background: var(--gradient);
       margin: 1rem auto;
       border-radius: 2px;
+
+      
+      @media (max-width: 480px) {
+        width: 150px;
+      }
     }
 
     .hero-subtext {
@@ -467,6 +581,12 @@ const AboutStyles = styled.div`
       opacity: 0.9;
       max-width: 600px;
       margin: 0 auto;
+
+      
+      @media (max-width: 768px) {
+        font-size: 1rem;
+        padding: 0 1rem;
+      }
     }
   }
 
@@ -479,6 +599,16 @@ const AboutStyles = styled.div`
     position: relative;
     backdrop-filter: blur(10px);
 
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
   .section-icon{
     margin: 0.5rem; 
   }
@@ -489,6 +619,10 @@ const AboutStyles = styled.div`
       display: flex;
       align-items: center;
       gap: 1rem;
+
+      @media (max-width: 480px) {
+        font-size: 1.1rem;
+      }
     }
   }
 
@@ -497,6 +631,18 @@ const AboutStyles = styled.div`
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
     margin: 3rem 0;
+
+    
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
   }
 
   .tech-card {
@@ -506,6 +652,14 @@ const AboutStyles = styled.div`
     transition: transform 0.3s ease;
     position: relative;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1.1rem;
+    }
 
     &::before {
       content: '';
@@ -559,6 +713,11 @@ const AboutStyles = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
+
+    
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .team-member {
@@ -567,15 +726,21 @@ const AboutStyles = styled.div`
     border-radius: 1rem;
     background: rgba(0, 0, 0, 0.3);
 
-     .hologram-avatar {
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 1rem;
-    border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid rgba(99, 102, 241, 0.3);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+
+    .hologram-avatar {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+
+      @media (max-width: 480px) {
+        width: 120px;
+        height: 120px;
+      }
     
     &::before {
       content: '';
@@ -596,6 +761,7 @@ const AboutStyles = styled.div`
       object-fit: cover;
       position: relative;
       filter: grayscale(20%) contrast(110%);
+
     }
   }
 
@@ -618,13 +784,26 @@ const AboutStyles = styled.div`
 
     h4 {
       color: var(--primary);
-      margin: 0.5rem 0;
+      margin: 0.5rem 0; 
+
+      @media (max-width: 480px) {
+        font-size: 1rem;
+      }
+
     }
 
     p {
       opacity: 0.9;
       font-size: 0.9rem;
+
+      @media (max-width: 480px) {
+        font-size: 0.85rem;
+      }
     }
+
+    
+   
+
   }
 
   .partners-section {
@@ -637,6 +816,10 @@ const AboutStyles = styled.div`
       align-items: center;
       justify-content: center;
       gap: 1rem;
+
+      @media (max-width: 480px) {
+        font-size: 1rem;
+      }
     }
   }
 
@@ -645,6 +828,11 @@ const AboutStyles = styled.div`
     justify-content: center;
     gap: 1.5rem;
     flex-wrap: wrap;
+
+    
+    @media (max-width: 480px) {
+      gap: 1rem;
+    }
   }
 
   .logo-chip {
@@ -658,6 +846,11 @@ const AboutStyles = styled.div`
     gap: 0.5rem;
     transition: all 0.3s ease;
 
+    @media (max-width: 768px) {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+    }
+
     &:hover {
       background: rgba(99, 102, 241, 0.2);
       transform: translateY(-2px);
@@ -669,8 +862,147 @@ const AboutContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 360px) {
+    padding: 0.75rem;
+  }
 `;
 
+const ModelStyles = styled.div`
+  .model-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
+  }
+
+  .data-highlight {
+    text-align: center;
+    padding: 2rem;
+    margin: 2rem 0;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 1rem;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem;
+    }
+  }
+
+  .data-source {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .source-chip {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid var(--primary);
+  }
+
+  .risk-levels {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .risk-card {
+    flex: 1;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
+  }
+
+  .high-risk { background: var(--high-risk); }
+  .moderate-risk { background: var(--moderate-risk); }
+  .low-risk { background: var(--low-risk); }
+
+  .feature-section {
+    display: flex;
+    gap: 1.5rem;
+    padding: 2rem;
+    margin: 2rem 0;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .section-icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+
+      @media (max-width: 480px) {
+        font-size: 2rem;
+      }
+    }
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .tech-card {
+    padding: 1.5rem;
+    text-align: center;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 0.75rem;
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
+  }
+
+  .code-block {
+    background: #1e1e1e;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+
+    @media (max-width: 480px) {
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+  }
+`;
 // Home Component (moved from App)
 const Home = () => {
   const [drugs, setDrugs] = useState([]);
@@ -908,7 +1240,7 @@ function App() {
   return (
     <Router>
       <GlobalStyle />
-      <Navbar>
+      {/* <Navbar>
         <h1><Link to="/">DDI.AI</Link></h1>
         <div style={{ display: 'flex', gap: '2rem' }}>
           <Link to="/about" style={{ color: 'white', textDecoration: 'none' }}>
@@ -921,8 +1253,8 @@ function App() {
             <FiBook /> Fun & Learn
           </Link>
         </div>
-      </Navbar>
-
+      </Navbar> */}
+      <Navigation />
       <Container>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -1021,85 +1353,104 @@ function App() {
           } />
           <Route path="/model" element={
             <InputCard>
-              <h2><FiCode /> How Our AI Predicts Drug Interactions</h2>
-              <h3><FiShield /> Understanding the Risks</h3>
-              <p>Our system evaluates drug pairs using advanced machine learning to identify potential risks:</p>
-              <div style={{ display: 'flex', gap: '1rem', margin: '1.5rem 0' }}>
-                <div style={{ background: 'var(--high-risk)', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <h4>High Risk</h4>
-                  <p>Immediate medical attention needed</p>
-                </div>
-                <div style={{ background: 'var(--moderate-risk)', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <h4>Moderate Risk</h4>
-                  <p>Consult your doctor</p>
-                </div>
-                <div style={{ background: 'var(--low-risk)', padding: '1rem', borderRadius: '0.5rem' }}>
-                  <h4>Low Risk</h4>
-                  <p>Generally safe</p>
-                </div>
-              </div>
+              <ModelStyles>
+                <div className="model-container">
 
-              <h3><FiCpu /> How It Works</h3>
-              <div style={{ display: 'flex', gap: '1.5rem', padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', margin: '1.5rem 0', alignItems: 'center' }}>
-                <FiDatabase />
-                <div>
-                  <h4>1. Medical Knowledge Base</h4>
-                  <p>Analyzes 10M+ historical medical records and known drug interactions</p>
-                </div>
-              </div>
+                  {/* Data Section */}
+                  <div className="data-highlight">
+                    <h2><FiDatabase /> Trained on 300,000+ Drug Interactions</h2>
+                    <p>Curated from trusted medical sources:</p>
+                    <div className="data-source">
+                      <span className="source-chip">Kaggle Datasets</span>
+                      <span className="source-chip">DrugBank</span>
+                      <span className="source-chip">FDA Reports</span>
+                      <span className="source-chip">Clinical Trials</span>
+                    </div>
+                  </div>
 
-              <div style={{ display: 'flex', gap: '1.5rem', padding: '2rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', margin: '1.5rem 0', alignItems: 'center' }}>
-                <FiCpu />
-                <div>
-                  <h4>2. Dual AI Analysis</h4>
-                  <p>Our multi-task neural network simultaneously predicts:</p>
-                  <ul style={{ marginTop: '0.5rem', marginLeft: '0.9rem', opacity: 0.9 }}>
-                    <li>Interaction Risk Level (Low/Moderate/Severe)</li>
-                    <li>Specific Interaction Mechanism</li>
-                    <li>Clinical Recommendations</li>
-                  </ul>
-                </div>
-              </div>
+                  {/* Risk Prediction */}
+                  <h2><FiShield /> Interaction Risk Prediction</h2>
+                  <div className="risk-levels">
+                    <div className="risk-card high-risk">
+                      <h4>High Risk (＞20%)</h4>
+                      <p>Immediate medical attention needed</p>
+                    </div>
+                    <div className="risk-card moderate-risk">
+                      <h4>Moderate Risk (5-20%)</h4>
+                      <p>Consult your doctor</p>
+                    </div>
+                    <div className="risk-card low-risk">
+                      <h4>Low Risk (＜5%)</h4>
+                      <p>Generally safe with monitoring</p>
+                    </div>
+                  </div>
 
-              <h3>Technical Overview</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', padding: '2rem', background: 'var(--dark)', borderRadius: '1rem', margin: '2rem 0' }}>
-                <div style={{ textAlign: 'center', padding: '1.5rem', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '0.75rem' }}>
-                  <h4>Input Layer</h4>
-                  <p>1500+ Biological Features</p>
-                </div>
-                <div style={{ textAlign: 'center', padding: '1.5rem', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '0.75rem' }}>
-                  <h4>Hidden Layers</h4>
-                  <p>1024 → 512 → 256 Nodes</p>
-                </div>
-                <div style={{ textAlign: 'center', padding: '1.5rem', background: 'rgba(99, 102, 241, 0.1)', borderRadius: '0.75rem' }}>
-                  <h4>Output</h4>
-                  <p>Risk Prediction</p>
-                </div>
-              </div>
+                  {/* How It Works */}
+                  <div className="feature-section">
+                    <FiDatabase className="section-icon" />
+                    <div>
+                      <h4>Medical Knowledge Base</h4>
+                      <p>Analyzes 300,000+ historical medical records and known drug interactions</p>
+                    </div>
+                  </div>
 
-              <h3>Code Insight</h3>
-              <pre style={{ background: '#1e1e1e', padding: '1.5rem', borderRadius: '0.75rem', margin: '1.5rem 0', overflowX: 'auto' }}>
-                <code className="language-python">
-                  {`# Simplified AI Architecture
-class DrugSafetyAI:
-    def analyze(self, drug1, drug2):
-        # 1. Extract biological features
-        features = self.get_features(drug1, drug2)
-        
-        # 2. Neural network processing
-        risk_prediction = self.neural_network(features)
-        
-        # 3. Generate human-readable explanation
-        explanation = self.explain_results(risk_prediction)
-        
-        return {
-            'risk': risk_prediction,
-            'explanation': explanation
-        }`}
-                </code>
-              </pre>
+                  <div className="feature-section">
+                    <FiCpu className="section-icon" />
+                    <div>
+                      <h4>Dual AI Analysis</h4>
+                      <p>Our multi-task neural network simultaneously predicts:</p>
+                      <ul className="prediction-list">
+                        <li>Interaction Risk Level (Low/Moderate/Severe)</li>
+                        <li>Specific Interaction Mechanism</li>
+                        <li>Clinical Recommendations</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Technical Overview */}
+                  <h3><FiActivity /> Technical Overview</h3>
+                  <div className="tech-grid">
+                    <div className="tech-card">
+                      <h4>Input Layer</h4>
+                      <p>1500+ Biological Features</p>
+                    </div>
+                    <div className="tech-card">
+                      <h4>Hidden Layers</h4>
+                      <p>1024 → 512 → 256 Nodes</p>
+                    </div>
+                    <div className="tech-card">
+                      <h4>Output</h4>
+                      <p>Risk Prediction Matrix</p>
+                    </div>
+                  </div>
+
+                  {/* Code Insight */}
+                  <h3><FiTerminal /> Core Algorithm</h3>
+                  <pre className="code-block">
+                    <code className="language-python">
+                      {`# Simplified Prediction Pipeline
+def predict_interaction(drug_a, drug_b):
+    # Feature extraction from 300k+ dataset
+    features = extract_features(drug_a, drug_b)
+    
+    # Dual neural network processing
+    risk_level = risk_model.predict(features)
+    mechanism = mechanism_model.predict(features)
+    
+    # Generate clinical guidance
+    guidance = generate_guidance(risk_level, mechanism)
+    
+    return {
+        'risk': risk_level,
+        'mechanism': mechanism,
+        'guidance': guidance
+    }`}
+                    </code>
+                  </pre>
+                </div>
+              </ModelStyles>
             </InputCard>
-          } />
+          }/>
           <Route path="/fun-and-learn" element={<FunAndLearn />} />
         </Routes>
 
@@ -1143,5 +1494,48 @@ class DrugSafetyAI:
     </Router>
   );
 }
+
+const Navigation = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <>
+      <Navbar>
+        <h1><Link to="/">DDI.AI</Link></h1>
+
+        {/* Desktop Links */}
+        <div className="desktop-links">
+          <Link to="/about">
+            <FiInfo /> About
+          </Link>
+          <Link to="/model">
+            <FiCode /> Model
+          </Link>
+          <Link to="/fun-and-learn">
+            <FiBook /> Fun & Learn
+          </Link>
+        </div>
+
+        {/* Mobile Hamburger */}
+        <HamburgerButton onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <FiX /> : <FiMenu />}
+        </HamburgerButton>
+      </Navbar>
+
+      {/* Mobile Menu */}
+      <MobileMenu isOpen={isMenuOpen}>
+        <Link to="/about" onClick={() => setIsMenuOpen(false)}>
+          <FiInfo /> About
+        </Link>
+        <Link to="/model" onClick={() => setIsMenuOpen(false)}>
+          <FiCode /> Model
+        </Link>
+        <Link to="/fun-and-learn" onClick={() => setIsMenuOpen(false)}>
+          <FiBook /> Fun & Learn
+        </Link>
+      </MobileMenu>
+    </>
+  );
+};
 
 export default App;
