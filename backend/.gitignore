@@ -1,3 +1,8 @@
+# Add these lines
 __pycache__/
 *.csv
-node_modules/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+.env
