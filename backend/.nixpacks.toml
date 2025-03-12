@@ -1,6 +1,7 @@
 [phases.setup]
 nixPkgs = [
   "python310",
+  "python310Packages.pip",
   "gcc",
   "zlib.dev",
   "libxml2.dev",
@@ -11,14 +12,17 @@ nixPkgs = [
 ]
 
 [phases.build]
+cache = false  # Nix handles caching automatically
 commands = [
-  # Clean any existing Python installations
-  "rm -rf /opt/venv ~/.cache/pip ~/.local/lib/python3*",
+  # Clean any Python remnants
+  "rm -rf ~/.cache/pip ~/.local/lib/python3*",
   
-  # Install directly using Nix-managed Python
-  "pip install --user --upgrade pip setuptools wheel",
-  "pip install --user torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
-  "pip install --user -r requirements.txt"
+  # Install directly into Nix store
+  "pip install --prefix=/nix/store torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
+  "pip install --prefix=/nix/store -r requirements.txt",
+  
+  # Create symlinks for runtime
+  "ln -s /nix/store/lib/python3.10/site-packages /app/site-packages"
 ]
 
 [phases.start]
