@@ -21,6 +21,9 @@ RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt && \
     /opt/venv/bin/pip install --no-cache-dir torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
 
+
+ENV SKLEARN_WARN_IGNORE=1
+
 # Copy application
 COPY . .
 
@@ -32,3 +35,4 @@ RUN echo '#!/bin/sh\n/opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port ${PORT
     chmod +x start.sh
 
 CMD ["./start.sh"]
+
