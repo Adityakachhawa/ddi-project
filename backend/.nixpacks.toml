@@ -1,7 +1,6 @@
 [phases.setup]
 nixPkgs = [
   "python310",
-  "python310Packages.venvShellHook",
   "gcc",
   "zlib.dev",
   "libxml2.dev",
@@ -12,19 +11,15 @@ nixPkgs = [
 ]
 
 [phases.build]
-before_commands = ["sh scripts/clean.sh"]
 commands = [
-  # Clean existing environments
+  # Clean any existing Python installations
   "rm -rf /opt/venv ~/.cache/pip ~/.local/lib/python3*",
   
-  # Create isolated environment
-  "python -m venv --clear --copies /opt/venv",
-  
-  # Direct path installation
-  "/opt/venv/bin/pip install --upgrade pip setuptools wheel",
-  "/opt/venv/bin/pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
-  "/opt/venv/bin/pip install -r requirements.txt --no-cache-dir"
+  # Install directly using Nix-managed Python
+  "pip install --user --upgrade pip setuptools wheel",
+  "pip install --user torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
+  "pip install --user -r requirements.txt"
 ]
 
 [phases.start]
-command = "/opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port $PORT"
+command = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT"

@@ -16,3 +16,8 @@
 **/Dockerfile*  # Critical! Exclude any Dockerfiles
 **/nixpacks.postbuild
 **/.dockerignore  # Optional but common
+Dockerfile
+docker-compose*
+**/__pycache__
+**/.venv
+**/venv
