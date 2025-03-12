@@ -1,5 +1,7 @@
 import sys
+import os
 sys.stdout.reconfigure(encoding='utf-8')
+os.environ['LD_LIBRARY_PATH'] = '/nix/store/*-glibc-2*/lib:' + os.environ.get('LD_LIBRARY_PATH', '')
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,7 +13,6 @@ from unidecode import unidecode
 from fuzzywuzzy import process
 import logging
 from typing import Dict, List, Union
-import os
 from fastapi.responses import JSONResponse
 
 # Configure logging
