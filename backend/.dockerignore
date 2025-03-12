@@ -1,0 +1,18 @@
+# Base on your .gitignore but add Docker-specific exclusions
+**/.git
+**/venv
+**/__pycache__
+**/*.py[cod]
+**/.DS_Store
+**/.env
+**/.vscode
+**/tests
+**/local_data
+**/node_modules
+**/dist
+**/build
+**/*.log
+**/docker-compose*
+**/Dockerfile*  # Critical! Exclude any Dockerfiles
+**/nixpacks.postbuild
+**/.dockerignore  # Optional but common

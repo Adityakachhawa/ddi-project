@@ -12,18 +12,18 @@ nixPkgs = [
 ]
 
 [phases.build]
-before_commands = ["sh nix/post-build.sh"]
+before_commands = ["sh scripts/clean.sh"]
 commands = [
-  # Clean existing venv if present
-  "rm -rf /opt/venv || true",
+  # Clean existing environments
+  "rm -rf /opt/venv ~/.cache/pip ~/.local/lib/python3*",
   
-  # Create fresh venv
-  "python -m venv --system-site-packages /opt/venv",
+  # Create isolated environment
+  "python -m venv --clear --copies /opt/venv",
   
-  # Install dependencies
+  # Direct path installation
   "/opt/venv/bin/pip install --upgrade pip setuptools wheel",
   "/opt/venv/bin/pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
-  "/opt/venv/bin/pip install -r requirements.txt"
+  "/opt/venv/bin/pip install -r requirements.txt --no-cache-dir"
 ]
 
 [phases.start]
