@@ -8,11 +8,6 @@ import { useRef } from 'react';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 
-const API_URL = process.env.NODE_ENV === 'production'
-  ? 'https://your-api-domain.com'
-  : 'http://localhost:8000';
-
-
 const GlobalStyle = createGlobalStyle`
   :root {
     --primary: #6366f1;
@@ -1044,7 +1039,7 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.get(`${API_URL}/all-drugs`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/all-drugs`, {
         params: { search: query, limit: 5 } // Limit to 5 suggestions
       });
       setSuggestions(response.data.drugs);
@@ -1059,7 +1054,7 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const response = await axios.get(`${API_URL}/predict`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/predict`, {
         params: { drugA: drugs[0], drugB: drugs[1] }
       });
 
