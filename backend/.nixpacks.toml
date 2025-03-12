@@ -1,21 +1,30 @@
 [phases.setup]
 nixPkgs = [
   "python310",
+  "python310Packages.venvShellHook",
   "gcc",
   "zlib.dev",
-  "zlib",  # Explicit zlib library
   "libxml2.dev",
   "libffi.dev",
   "openssl.dev",
-  "stdenv.cc.cc.lib"  # C library dependencies
+  "stdenv.cc.cc.lib",
+  "glibcLocales"
 ]
 
 [phases.build]
+before_commands = ["sh nix/post-build.sh"]
 commands = [
-  "pip install --upgrade pip setuptools wheel",
-  "pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
-  "pip install -r requirements.txt"
+  # Clean existing venv if present
+  "rm -rf /opt/venv || true",
+  
+  # Create fresh venv
+  "python -m venv --system-site-packages /opt/venv",
+  
+  # Install dependencies
+  "/opt/venv/bin/pip install --upgrade pip setuptools wheel",
+  "/opt/venv/bin/pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu",
+  "/opt/venv/bin/pip install -r requirements.txt"
 ]
 
 [phases.start]
-command = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+command = "/opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port $PORT"
