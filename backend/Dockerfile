@@ -4,7 +4,8 @@ FROM python:3.10-slim
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    PORT=8000
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -30,9 +31,13 @@ COPY . .
 # Ensure resources are accessible
 RUN chmod a+rx -R ./resources/
 
+# Create start script
+RUN echo '#!/bin/sh\nuvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}' > start.sh && \
+    chmod +x start.sh
+
 # Runtime configuration
 ENV PATH="/opt/venv/bin:$PATH"
 EXPOSE $PORT
 
-# Start command
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "$PORT"]
+# Start command using environment variable
+CMD ["./start.sh"]
