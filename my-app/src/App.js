@@ -1057,7 +1057,7 @@ const Home = () => {
     }
 
     try {
-      const genericsResponse = await axios.get(`${API_URL}/all-drugs`, {
+      const genericsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/all-drugs`, {
         params: { search: query, limit: 5 }
       });
       const genericSuggestions = genericsResponse.data.drugs.map(drug => ({
@@ -1066,7 +1066,7 @@ const Home = () => {
         inputValue: drug // Display in input/drug tag
       }));
 
-      const synonymsResponse = await axios.get(`${API_URL}/synonym-suggestions/${query}`);
+      const synonymsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/synonym-suggestions/${query}`);
       const synonymSuggestions = (synonymsResponse.data.suggestions || []).map(suggestion => ({
         ...suggestion,
         inputValue: suggestion.display.split(' (')[0] // "dolo 650" from "dolo 650 (Brand of acetaminophen)"
@@ -1126,7 +1126,7 @@ const Home = () => {
     setError(null);
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/predict`, {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/predict`, {
         params: { drugA: drugValues[0], drugB: drugValues[1] } // Use drugValues
       });
       console.log('API Response:', response.data);
