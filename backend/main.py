@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 from unidecode import unidecode
 from fuzzywuzzy import process
+from fuzzywuzzy import fuzz
 import logging
 from typing import Dict, List, Union
 from fastapi.responses import JSONResponse
@@ -828,11 +829,46 @@ def normalize_name(name: str) -> str:
     return unidecode(name).lower().strip().replace("-", " ").replace("  ", " ")
 
 def find_best_match(name: str) -> str:
+    """Enhanced drug matching with synonym resolution and validation"""
     original = normalize_name(name)
+    
+    # Normalize drug_mapping keys for consistent lookup
+    drug_mapping_normalized = {normalize_name(k): k for k in drug_mapping.keys()}
+    
+    # 1. Check direct synonyms first
     if original in DRUG_SYNONYMS:
-        return DRUG_SYNONYMS[original]
-    match, score = process.extractOne(original, drug_mapping.keys())
-    return match if score > 90 else original
+        generic_name = DRUG_SYNONYMS[original]
+        normalized_generic = normalize_name(generic_name)
+        if normalized_generic in drug_mapping_normalized:
+            return drug_mapping_normalized[normalized_generic]  # Return original case from drug_mapping
+        logger.warning(f"Synonym {original} maps to missing generic: {generic_name}")
+
+    # 2. Check if input is already a known generic
+    if original in drug_mapping_normalized:
+        return drug_mapping_normalized[original]
+
+    # 3. Search in synonyms' generic names
+    for brand, generic in DRUG_SYNONYMS.items():
+        if original == normalize_name(generic):
+            normalized_generic = normalize_name(generic)
+            if normalized_generic in drug_mapping_normalized:
+                return drug_mapping_normalized[normalized_generic]
+            logger.warning(f"Generic {generic} from synonym not in drug_mapping")
+            break
+
+    # 4. Fuzzy match with combined dictionary (brands + generics)
+    combined_names = list(drug_mapping.keys()) + list(DRUG_SYNONYMS.keys())
+    match, score = process.extractOne(original, combined_names, scorer=fuzz.QRatio)
+    
+    if score > 85:
+        final_name = DRUG_SYNONYMS.get(match, match)
+        normalized_final = normalize_name(final_name)
+        if normalized_final in drug_mapping_normalized:
+            return drug_mapping_normalized[normalized_final]
+        logger.warning(f"Fuzzy match {match} resolved to invalid generic: {final_name}")
+
+    logger.error(f"No valid match found for {original}")
+    raise ValueError(f"No valid match found for {original}")
 
 def predict_interaction(drugA: str, drugB: str) -> dict:
     """Wrapper function for model prediction"""
@@ -877,14 +913,16 @@ def predict_interaction(drugA: str, drugB: str) -> dict:
 @app.get("/predict")
 async def predict(drugA: str, drugB: str):
     try:
-        matched_A = find_best_match(drugA.lower().strip())
-        matched_B = find_best_match(drugB.lower().strip())
+        matched_A = find_best_match(drugA)
+        matched_B = find_best_match(drugB)
 
+        # Check if the matched names exist in drug_mapping
         if matched_A not in drug_mapping:
             raise HTTPException(status_code=404, detail=f"Drug '{drugA}' not found")
         if matched_B not in drug_mapping:
             raise HTTPException(status_code=404, detail=f"Drug '{drugB}' not found")
 
+    
         prediction = predict_interaction(matched_A, matched_B)
         
         interaction_text = interaction_list[prediction["interaction_idx"]]
@@ -929,18 +967,28 @@ async def debug_interaction(index: int):
 @app.get("/check-drug/{drug_name}")
 async def check_drug(drug_name: str):
     try:
+        logger.info(f"Received drug check request for: {drug_name}")
+
+        # Normalize and find match
         normalized = normalize_name(drug_name)
-        match = find_best_match(normalized)
-        exists = match in drug_mapping
+        mapped_name = find_best_match(normalized)
+
+        # Ensure mapped_name is checked correctly
+        normalized_mapped = normalize_name(mapped_name)
+        exists = normalized_mapped in {normalize_name(k): v for k, v in drug_mapping.items()}
+
+        logger.info(f"Final matched name: {mapped_name} (Exists in database: {exists})")
+
         return {
             "input": drug_name,
             "normalized": normalized,
-            "matched_name": match,
+            "matched_name": mapped_name,
             "exists": exists,
             "message": f"Drug {'found' if exists else 'not found'} in database"
         }
+
     except Exception as e:
-        logger.error(f"Drug check error: {str(e)}")
+        logger.error(f"Unexpected error in /check-drug/: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Failed to process drug check request")
 
 @app.get("/all-drugs")
@@ -968,6 +1016,41 @@ async def debug_interaction_67():
         "technical": interaction_list[67],
         "description": simple_language_mapping[interaction_list[67]]
     }
+
+@app.get("/test-synonym/{drug_name}")
+async def test_synonym(drug_name: str):
+    normalized = normalize_name(drug_name)
+    best_match = find_best_match(normalized)
+    return {"input": drug_name, "normalized": normalized, "best_match": best_match}
+
+app.get("/debug/synonyms")
+async def debug_synonyms():
+    return {"total_synonyms": len(DRUG_SYNONYMS), "example": dict(list(DRUG_SYNONYMS.items())[:10])}
+
+@app.get("/synonym-suggestions/{query}")
+async def synonym_suggestions(query: str):
+    try:
+        normalized_query = normalize_name(query)
+        drug_mapping_normalized = {normalize_name(k): k for k in drug_mapping.keys()}
+        results = []
+        for term, generic in DRUG_SYNONYMS.items():
+            normalized_generic = normalize_name(generic)
+            if normalized_generic not in drug_mapping_normalized:
+                continue
+            term_normalized = normalize_name(term)
+            # Stricter matching
+            if term_normalized.startswith(normalized_query) or fuzz.partial_ratio(normalized_query, term_normalized) > 90:
+                results.append({"display": f"{term} (Brand of {generic})", "value": generic})
+            if normalized_query in normalized_generic:
+                brands = [k for k, v in DRUG_SYNONYMS.items() if normalize_name(v) == normalized_generic]
+                results.append({"display": f"{generic} (Generic for: {', '.join(brands)})", "value": generic})
+        seen = set()
+        final_results = [r for r in results if not (r['value'] in seen or seen.add(r['value']))][:10]
+        return {"suggestions": final_results}
+    except Exception as e:
+        logger.error(f"Synonym suggestion error: {str(e)}")
+        raise HTTPException(500, "Suggestion service unavailable")
+
 
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request, exc):

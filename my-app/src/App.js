@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import styled, { createGlobalStyle, keyframes } from 'styled-components';
 import { FiX, FiInfo, FiCode, FiBook, FiAlertTriangle, FiChevronRight, FiDatabase, FiCpu, FiShield, FiTwitter, FiTerminal, FiMenu, FiLinkedin, FiGithub, FiMail, FiUsers, FiActivity } from 'react-icons/fi';
 import FunAndLearn from './component/FunAndLearn';
 import axios from 'axios';
 import { useRef } from 'react';
-import Prism from 'prismjs';
+// import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 
 const GlobalStyle = createGlobalStyle`
@@ -47,10 +47,10 @@ const pulse = keyframes`
   100% { transform: scale(1); }
 `;
 
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
+// const fadeIn = keyframes`
+//   from { opacity: 0; transform: translateY(20px); }
+//   to { opacity: 1; transform: translateY(0); }
+// `;
 
 const Container = styled.div`
   max-width: 1200px;
@@ -127,7 +127,7 @@ const MobileMenu = styled.div`
   background: rgba(15, 23, 42, 0.98);
   backdrop-filter: blur(15px);
   padding: 2rem;
-  transform: translateX(${props => props.isOpen ? '0' : '100%'});
+  transform: translateX(${props => props.$isOpen ? '0' : '100%'});
   transition: transform 0.3s ease-in-out;
   z-index: 1001;
   display: flex;
@@ -162,17 +162,17 @@ const HamburgerButton = styled.button`
   }
 `;
 
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-  z-index: 1000;
-  display: ${props => props.isOpen ? 'block' : 'none'};
-`;
+// const Overlay = styled.div`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background: rgba(0, 0, 0, 0.5);
+//   backdrop-filter: blur(2px);
+//   z-index: 1000;
+//   display: ${props => props.isOpen ? 'block' : 'none'};
+// `;
 const HeroSection = styled.div`
   background: var(--gradient);
   padding: 4rem 2rem;
@@ -243,30 +243,34 @@ const FeatureCard = styled.div`
 `;
 
 const InputCard = styled.div.attrs(() => ({ ref: undefined }))`
-  background: rgba(255, 255, 255, 0.05);
+  background:rgba(30, 45, 77, 0.32);
   border-radius: 1rem;
   padding: 2rem;
   margin: 2rem 0;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: transform 0.3s ease;
+  position: relative; // Establish stacking context
+  z-index: 2; // Ensure it’s above TestimonialsSection but below SuggestionsList
 
   &:hover {
     transform: translateY(-5px);
   }
 `;
 
+
 const DrugInput = styled.div`
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   padding: 1rem;
   border-radius: 0.75rem;
-  border: 2px solid ${props => props.error ? 'var(--high-risk)' : 'var(--primary)'};
-  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid ${props => props.$error ? 'var(--high-risk)' : 'var(--primary)'};
+  background: #0f172a;
   min-height: 150px;
   align-items: center;
   transition: border-color 0.3s ease;
+  z-index: 2;
 `;
 
 const DrugTag = styled.div`
@@ -319,6 +323,8 @@ const TestimonialsSection = styled.div`
   padding: 2rem;
   border-radius: 1rem;
   margin: 2rem 0;
+  position: relative; // Establish stacking context
+  z-index: 1; // Ensure it’s below SuggestionsList (z-index: 6000)
 `;
 
 const TestimonialCard = styled.div`
@@ -366,27 +372,40 @@ const CTASection = styled.div`
   }
 `;
 
-const SuggestionsList = styled.div`
-  position: absolute;
-  background-color: var(--dark);
+const NoticeBanner = styled.div`
+  background: rgba(99, 102, 241, 0.1); // Subtle purple background
   border: 1px solid var(--primary);
-  border-radius: 0.5rem;
-  margin-top: 0.5rem;
-  width: 100%;
-  z-index: 1000;
-`;
-
-const SuggestionItem = styled.div`
-  padding: 0.5rem;
-  cursor: pointer;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   color: var(--light);
-  border-bottom: 1px solid var(--primary);
+  font-size: 1rem;
+  text-align: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
 
-  &:hover {
-    background-color: var(--primary);
-    color: white;
+  svg {
+    color: var(--accent); // Pink accent for the icon
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    font-size: 0.9rem;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 `;
+
 
 const Footer = styled.footer`
   background: rgba(15, 23, 42, 0.98);
@@ -980,7 +999,6 @@ const ModelStyles = styled.div`
     text-align: center;
     background: rgba(99, 102, 241, 0.1);
     border-radius: 0.75rem;
-
   }
 
   @media (max-width: 768px) {
@@ -1019,19 +1037,19 @@ const ModelStyles = styled.div`
 // Home Component (moved from App)
 const Home = () => {
   const [drugs, setDrugs] = useState([]);
+  const [drugValues, setDrugValues] = useState([]);
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [suggestions, setSuggestions] = useState([]); // State for suggestions
-  const [inputValue, setInputValue] = useState(''); // i am use this line to clear the waste of taste after suggestion.
-  // const navigate = useNavigate(); // Initialize useNavigate
+  const [suggestions, setSuggestions] = useState([]); // Combined suggestions
+  const [inputValue, setInputValue] = useState('');
   const inputRef = useRef(null);
 
   const handleScrollToInput = () => {
     inputRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Fetch drug suggestions
+  // Fetch combined suggestions (generics + synonyms)
   const fetchSuggestions = async (query) => {
     if (!query) {
       setSuggestions([]);
@@ -1039,40 +1057,81 @@ const Home = () => {
     }
 
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/all-drugs`, {
-        params: { search: query, limit: 5 } // Limit to 5 suggestions
+      const genericsResponse = await axios.get(`${API_URL}/all-drugs`, {
+        params: { search: query, limit: 5 }
       });
-      setSuggestions(response.data.drugs);
+      const genericSuggestions = genericsResponse.data.drugs.map(drug => ({
+        display: `${drug} (Generic)`,
+        value: drug,
+        inputValue: drug // Display in input/drug tag
+      }));
+
+      const synonymsResponse = await axios.get(`${API_URL}/synonym-suggestions/${query}`);
+      const synonymSuggestions = (synonymsResponse.data.suggestions || []).map(suggestion => ({
+        ...suggestion,
+        inputValue: suggestion.display.split(' (')[0] // "dolo 650" from "dolo 650 (Brand of acetaminophen)"
+      }));
+
+      const combined = [...synonymSuggestions, ...genericSuggestions];
+      const uniqueSuggestions = Array.from(
+        new Map(combined.map(item => [item.display, item])).values()
+      ).slice(0, 10);
+
+      setSuggestions(uniqueSuggestions);
     } catch (err) {
       console.error("Failed to fetch suggestions:", err);
       setSuggestions([]);
     }
   };
 
+  // Debounce to reduce API calls
+  const debounce = (func, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), delay);
+    };
+  };
+  const debouncedFetchSuggestions = debounce(fetchSuggestions, 300);
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value); // Use inputValue, not setQuery
+    debouncedFetchSuggestions(value); // Use debounced version
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    if (drugs.length < 2) {
+      setDrugs([...drugs, suggestion.inputValue]); // Add "dolo 650" to tags
+      setDrugValues([...drugValues, suggestion.value]); // Add "acetaminophen" internally
+      setInputValue(''); // Clear input
+      setSuggestions([]); // Hide dropdown
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && inputValue && drugs.length < 2) {
+      setDrugs([...drugs, inputValue]);
+      // Try to find matching suggestion, else use inputValue
+      const matchingSuggestion = suggestions.find(s => s.inputValue.toLowerCase() === inputValue.toLowerCase());
+      setDrugValues([...drugValues, matchingSuggestion ? matchingSuggestion.value : inputValue]);
+      setInputValue('');
+      setSuggestions([]);
+    }
+  };
   const handleSubmit = async () => {
     setError(null);
     setLoading(true);
-
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/predict`, {
-        params: { drugA: drugs[0], drugB: drugs[1] }
+      const response = await axios.get(`${API_URL}/predict`, {
+        params: { drugA: drugValues[0], drugB: drugValues[1] } // Use drugValues
       });
-
       console.log('API Response:', response.data);
-
-      // Update validation for new response format
-      if (!response.data ||
-        !response.data.drugs ||
-        !response.data.risk ||
-        !response.data.interaction ||
-        typeof response.data.risk_confidence === 'undefined' ||
-        typeof response.data.interaction_confidence === 'undefined') {
-        throw new Error('Invalid API response structure');
-      }
-
-      // Format the new response data
       const formattedData = {
-        drugs: response.data.drugs,
+        drugs: drugs, // Display original names
         risk: response.data.risk,
         risk_confidence: response.data.risk_confidence,
         interaction: response.data.interaction,
@@ -1080,7 +1139,6 @@ const Home = () => {
         severity: response.data.severity,
         color: response.data.color
       };
-
       setResults(formattedData);
     } catch (err) {
       setError(err.response?.data?.error || err.message);
@@ -1095,7 +1153,6 @@ const Home = () => {
       <HeroSection>
         <h2>AI-Powered Drug Safety</h2>
         <p>Instantly check for potential drug interactions and ensure patient safety.</p>
-        {/* Updated button to navigate to Home */}
         <button onClick={handleScrollToInput}>Get Started</button>
       </HeroSection>
 
@@ -1118,12 +1175,15 @@ const Home = () => {
       </FeaturesGrid>
 
       <InputCard ref={inputRef}>
-        <DrugInput error={error}>
+        <DrugInput $error={error}>
           {drugs.map((drug, index) => (
             <DrugTag key={index}>
               {drug}
               <button
-                onClick={() => setDrugs(drugs.filter((_, i) => i !== index))}
+                onClick={() => {
+                  setDrugs(drugs.filter((_, i) => i !== index));
+                  setDrugValues(drugValues.filter((_, i) => i !== index));
+                }}
                 style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
               >
                 <FiX />
@@ -1132,23 +1192,11 @@ const Home = () => {
           ))}
           <input
             type="text"
-            value={inputValue} // for clear suggestions @aditya.
+            value={inputValue}
             placeholder="Enter drug name and press Enter"
             disabled={drugs.length >= 2}
-            onChange={(e) => {
-              setInputValue(e.target.value); // for clear waste after suggestion
-              fetchSuggestions(e.target.value);
-            }}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' && e.target.value.trim()) {
-                if (drugs.length < 2) {
-                  setDrugs([...drugs, e.target.value.trim().toLowerCase()]);
-                  e.target.value = '';
-                  setInputValue(''); // clear waste after suggestion
-                  setSuggestions([]); // Clear suggestions after selection
-                }
-              }
-            }}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
             style={{
               background: 'transparent',
               border: 'none',
@@ -1159,40 +1207,16 @@ const Home = () => {
             }}
           />
           {suggestions.length > 0 && (
-            <div style={{
-              position: 'relative',
-              backgroundColor: 'var(--dark)',
-              border: '1px solid var(--primary)',
-              borderRadius: '0.5rem',
-              marginTop: '0.5rem',
-              width: '100%',
-              zIndex: 1000
-            }}>
-              {suggestions.map((drug, index) => (
-                <div
+            <SuggestionsList>
+              {suggestions.map((suggestion, index) => (
+                <SuggestionItem
                   key={index}
-                  onClick={() => {
-                    if (drugs.length < 2) {
-                      setDrugs([...drugs, drug.toLowerCase()]);
-                      setInputValue(''); // to clear waste of text after suggestion
-                      setSuggestions([]); // Clear suggestions after selection
-                    }
-                  }}
-                  style={{
-                    padding: '0.5rem',
-                    cursor: 'pointer',
-                    color: 'var(--light)',
-                    borderBottom: '1px solid var(--primary)',
-                    ':hover': {
-                      backgroundColor: 'var(--primary)',
-                      color: 'white'
-                    }
-                  }}
+                  onClick={() => handleSuggestionClick(suggestion)}
                 >
-                  {drug}
-                </div>
+                  {suggestion.display}
+                </SuggestionItem>
               ))}
-            </div>
+            </SuggestionsList>
           )}
         </DrugInput>
 
@@ -1215,10 +1239,7 @@ const Home = () => {
           <p><strong>Drug Pair:</strong> {results.drugs.join(' + ')}</p>
           <p>
             <strong>Risk Level:</strong>
-            <span style={{
-              color: results.color,
-              marginLeft: '0.5rem'
-            }}>
+            <span style={{ color: results.color, marginLeft: '0.5rem' }}>
               {results.risk} ({(results.risk_confidence * 100).toFixed(1)}%)
             </span>
           </p>
@@ -1236,18 +1257,62 @@ const Home = () => {
         </TestimonialCard>
         <TestimonialCard>
           <p>"I love how detailed the interaction reports are. It helps me make better decisions for my patients."</p>
-          <span>— Dr. Aditya Kachhawa, Pharmacist</span>
+          <span>— Vasudev Jhawar, Pharmacist</span>
         </TestimonialCard>
       </TestimonialsSection>
 
       <CTASection>
         <h3>Ready to Ensure Drug Safety?</h3>
-        {/* Updated button to navigate to Home */}
         <button onClick={handleScrollToInput}>Check Interactions Now</button>
       </CTASection>
     </>
   );
 };
+
+const SuggestionsList = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #1f2a44 !important;
+  isolation: isolate;
+  opacity: 1;
+  border: 1px solid var(--primary);
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  z-index: 6000;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); // Reintroduced
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #1f2a44;
+    z-index: -1;
+  }
+`;
+
+const SuggestionItem = styled.div`
+  padding: 0.75rem;
+  cursor: pointer;
+  color: var(--light);
+  background-color:rgb(6, 10, 24) !important;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+  transition: all 0.2s ease;
+  &:hover {
+    background-color: #6366f1 !important;
+    color: white;
+  }
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
 // App Component
 function App() {
   return (
@@ -1299,7 +1364,7 @@ function App() {
                   <div className="grid-section">
                     <div className="tech-card glow-purple">
                       <FiDatabase />
-                      <h4>10M+ Medical Records</h4>
+                      <h4>3L+ Medical Records</h4>
                       <p>Analyzed for interaction patterns</p>
                     </div>
                     <div className="tech-card glow-blue">
@@ -1321,31 +1386,33 @@ function App() {
                       <div className="team-member">
                         <div className="hologram-avatar">
                           <img
-                            src={require('./assets/somdev.jpg')}
+                            src={require('./assets/aditya.jpg')}
                             alt="Dr. Somdev Kachhawa"
                             className="avatar-image"
                           />
                         </div>
-                        <h4>Dr. Somdev Kachhawa</h4>
-                        <p>Chief Pharmacologist</p>
+                        <h4>Aditya Kachhawa</h4>
+                        <p>DDI.AI Founder</p>
                         <p className="bio-text">
-                          15+ years clinical experience<br />
-                          MD, Pharmacology
+                          B.J.S. Rampuria Jain College's Student<br />
+                          BCA Part 3rd.
                         </p>
                       </div>
                       <div className="team-member">
                         <div className="hologram-avatar">
                           <img
-                            src={require('./assets/aditya.jpg')}
+                            src={require('./assets/somdev.jpg')}
                             alt="Aditya Kachhawa"
                             className="avatar-image"
                           />
                         </div>
-                        <h4>Aditya Kachhawa</h4>
-                        <p>AI Architect</p>
+                        <h4>Ketan Solanki</h4>
+                        <p>DDI Innovation Ally
+
+                        </p>
                         <p className="bio-text">
-                          Neural Networks Specialist<br />
-                          PhD Computational Biology
+                          B.J.S. Rampuria Jain College's Student<br />
+                          BCA Part 3rd.
                         </p>
                       </div>
                     </div>
@@ -1368,6 +1435,7 @@ function App() {
             <InputCard>
               <ModelStyles>
                 <div className="model-container">
+
 
                   {/* Data Section */}
                   <div className="data-highlight">
@@ -1425,7 +1493,7 @@ function App() {
                   <div className="tech-grid">
                     <div className="tech-card">
                       <h4>Input Layer</h4>
-                      <p>1500+ Biological Features</p>
+                      <p>3+ Biological Features</p>
                     </div>
                     <div className="tech-card">
                       <h4>Hidden Layers</h4>
@@ -1441,22 +1509,36 @@ function App() {
                   <h3><FiTerminal /> Core Algorithm</h3>
                   <pre className="code-block">
                     <code className="language-python">
-                      {`# Simplified Prediction Pipeline
-def predict_interaction(drug_a, drug_b):
-    # Feature extraction from 300k+ dataset
-    features = extract_features(drug_a, drug_b)
+                      {`# Drug Safety Prediction Flow
+def check_drug_safety(drugA, drugB):
+    # Step 1: Combine drug info
+    drug_profile = combine_drug_info(
+        get_targets(drugA),    # What the drugs act on
+        get_enzymes(drugB)     # How the body handles them
+    )
     
-    # Dual neural network processing
-    risk_level = risk_model.predict(features)
-    mechanism = mechanism_model.predict(features)
+    # Step 2: Check risks and effects
+    risk_level = predict_risk(
+        drug_profile,          # Looks at the combined info
+        trained_model='drug_safety_ai'  # Our smart model
+    )
     
-    # Generate clinical guidance
-    guidance = generate_guidance(risk_level, mechanism)
+    interaction_type = predict_effect(
+        drug_profile,          # Finds how they interact
+        known_effects='70+ types'  # Matches to known patterns
+    )
+    
+    # Step 3: Make it simple for people
+    patient_advice = explain_results(
+        risk=risk_level,       # Low, Moderate, or Severe
+        effect=interaction_type  # Easy-to-read explanation
+    )
     
     return {
-        'risk': risk_level,
-        'mechanism': mechanism,
-        'guidance': guidance
+        'risk': f"{risk_level} risk",       # Example: "Low risk"
+        'effect': interaction_type,         # Example: "Higher chance of bleeding"
+        'advice': patient_advice,           # Example: "Check with your doctor"
+        'confidence': "95%+ accurate"       # How sure we are
     }`}
                     </code>
                   </pre>
@@ -1481,25 +1563,42 @@ def predict_interaction(drug_a, drug_b):
             <div className="footer-section">
               <h4>Resources</h4>
               <div className="footer-links">
-                <a href="/docs"><FiChevronRight /> Documentation</a>
-                <a href="/api"><FiChevronRight /> API Reference</a>
-                <a href="/security"><FiChevronRight /> Security</a>
+                <a href="https://docs.example.com" target="_blank" rel="noopener noreferrer">
+                  <FiChevronRight /> Documentation
+                </a>
+                <a href="https://api.example.com" target="_blank" rel="noopener noreferrer">
+                  <FiChevronRight /> API Reference
+                </a>
+                <a href="/security" target="_blank" rel="noopener noreferrer">
+                  <FiChevronRight /> Security
+                </a>
               </div>
             </div>
 
             <div className="footer-section">
               <h4>Connect</h4>
               <div className="social-links">
-                <a href="#"><FiTwitter /></a>
-                <a href="#"><FiGithub /></a>
-                <a href="#"><FiLinkedin /></a>
-                <a href="#"><FiMail /></a>
+                <a href="https://twitter.com/example" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                  <FiTwitter />
+                </a>
+                <a href="https://github.com/example" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                  <FiGithub />
+                </a>
+                <a href="https://linkedin.com/company/example" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                  <FiLinkedin />
+                </a>
+                <a href="mailto:contact@example.com" aria-label="Email">
+                  <FiMail />
+                </a>
               </div>
             </div>
           </div>
-
+          <NoticeBanner>
+            <FiAlertTriangle />
+            <p>This is a college project under development. It’s not perfect yet—we’re working hard to improve it!</p>
+          </NoticeBanner>
           <div className="copyright">
-            <p>© 2023 DDI.AI. All rights reserved.</p>
+            <p>© 2025 DDI.AI. All rights reserved.</p>
             <p>Powered by AADI-Gen AI Pharmacology Company</p>
           </div>
         </Footer>
@@ -1518,6 +1617,9 @@ const Navigation = () => {
 
         {/* Desktop Links */}
         <div className="desktop-links">
+          <Link to="/">
+            <FiShield />Home
+          </Link>
           <Link to="/about">
             <FiInfo /> About
           </Link>
@@ -1534,9 +1636,19 @@ const Navigation = () => {
           {isMenuOpen ? <FiX /> : <FiMenu />}
         </HamburgerButton>
       </Navbar>
+      
 
       {/* Mobile Menu */}
-      <MobileMenu isOpen={isMenuOpen}>
+      <MobileMenu $isOpen={isMenuOpen}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <FiX
+            style={{ cursor: 'pointer', fontSize: '1.5rem' }}
+            onClick={() => setIsMenuOpen(false)} // Close button
+          />
+        </div>
+        <Link to="/" onClick={() => setIsMenuOpen(false)}>
+          <FiShield /> Home {/* Added Home button */}
+        </Link>
         <Link to="/about" onClick={() => setIsMenuOpen(false)}>
           <FiInfo /> About
         </Link>
