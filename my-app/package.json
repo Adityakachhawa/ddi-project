@@ -6,15 +6,16 @@
     "axios": "^1.7.9",
     "cra-template": "1.2.0",
     "prismjs": "^1.29.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-icons": "^5.4.0",
-    "react-router-dom": "^7.1.5",
-    "react-scripts": "^5.0.1",
+    "react-router-dom": "^6.26.2",
+    "react-scripts": "5.0.1",
     "styled-components": "^6.1.15",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -37,5 +38,21 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "eslint": "^9.12.0",
+    "@babel/plugin-proposal-class-properties": "@babel/plugin-transform-class-properties",
+    "@babel/plugin-proposal-numeric-separator": "@babel/plugin-transform-numeric-separator",
+    "@babel/plugin-proposal-optional-chaining": "@babel/plugin-transform-optional-chaining",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "@babel/plugin-transform-nullish-coalescing-operator",
+    "@babel/plugin-proposal-private-methods": "@babel/plugin-transform-private-methods",
+    "workbox-google-analytics": null,
+    "workbox-cacheable-response": null,
+    "rimraf": "^5.0.10",
+    "glob": "^11.0.0",
+    "svgo": "^3.3.2"
+  },
+  "devDependencies": {
+    "npm-force-resolutions": "^0.0.10"
   }
 }

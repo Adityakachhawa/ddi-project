@@ -29,6 +29,7 @@ app.add_middleware(
     allow_origins=[
         "https://ddi-project-git-main-aditya-kachhawas-projects.vercel.app",
         "https://ddi-project.vercel.app",
+        "https://ddiaadi.vercel.app/",
         "http://localhost:3000"
     ],
     allow_credentials=True,
@@ -40,15 +41,12 @@ app.add_middleware(
 from fastapi import Request
 from fastapi.responses import RedirectResponse
 
-@app.middleware("http")
-async def https_redirect(request: Request, call_next):
-    if request.url.scheme == "http":
-        url = request.url.replace(scheme="https")
-        return RedirectResponse(url)
-    return await call_next(request)
-
-# Load resources
-RESOURCE_PATH = "./resources"
+# @app.middleware("http")
+# async def https_redirect(request: Request, call_next):
+#     if request.url.scheme == "http":
+#         url = request.url.replace(scheme="https")
+#         return RedirectResponse(url)
+#     return await call_next(request)
 
 def load_resource(filename: str):
     """Safe resource loading with error handling"""
