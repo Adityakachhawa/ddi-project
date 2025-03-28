@@ -1,38 +1,48 @@
+# Use Python 3.10 slim as the base image
 FROM python:3.10-slim
 
-# System dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Environment setup
+# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     PYTHONPATH=/app \
-    PORT=8000
+    PORT=8000 \
+    SKLEARN_WARN_IGNORE=1
 
+# Set working directory
 WORKDIR /app
 
-# Install Python dependencies first for caching
+# Copy dependency files first for caching
 COPY requirements.txt .
+
+# Create and activate virtual environment, install dependencies
 RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt && \
     /opt/venv/bin/pip install --no-cache-dir torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
 
+# Ensure virtual environment is used in PATH
+ENV PATH="/opt/venv/bin:$PATH"
 
-ENV SKLEARN_WARN_IGNORE=1
-
-# Copy application
+# Copy the entire application (force cache invalidation with a build arg if needed)
+ARG BUILD_TIMESTAMP
 COPY . .
 
-# Fix permissions
-RUN chmod a+rx -R ./resources/
+# Fix permissions for resources directory (if it exists)
+RUN chmod -R a+rx ./resources/ || true
 
-# Start script
-RUN echo '#!/bin/sh\n/opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}' > start.sh && \
+# Create and configure start script
+RUN echo '#!/bin/sh\nuvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1' > start.sh && \
     chmod +x start.sh
 
-CMD ["./start.sh"]
+# Expose the port (optional, for documentation)
+EXPOSE ${PORT}
 
+# Set the default command
+CMD```dockerfile
+CMD ["./start.sh"]
