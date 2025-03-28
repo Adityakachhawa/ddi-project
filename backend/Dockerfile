@@ -44,5 +44,4 @@ RUN echo '#!/bin/sh\nuvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --work
 EXPOSE ${PORT}
 
 # Set the default command
-CMD```dockerfile
 CMD ["./start.sh"]
