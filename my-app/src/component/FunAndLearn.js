@@ -6,7 +6,7 @@ import { FiBook, FiDollarSign } from 'react-icons/fi';
 const Container = styled.div`
   margin: 2rem 0;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(30, 45, 77, 0.32);
   border-radius: 1rem;
 `;
 

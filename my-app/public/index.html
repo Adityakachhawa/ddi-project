@@ -1,43 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Character Encoding -->
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+
+    <!-- Title Tag (Optimized for SEO) -->
+    <title>DDI.AI: AI-Powered Drug Interaction Checker</title>
+
+    <!-- Meta Description (Optimized for CTR) -->
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="DDI.AI: AI-powered drug interaction checker for healthcare professionals. Predict drug safety with advanced AI models in seconds."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <!-- Keywords (Optional, but can help some search engines) -->
+    <meta
+      name="keywords"
+      content="AI drug interaction checker, drug safety predictor, DDI prediction tool, AI pharmacology, check drug interactions online"
+    />
+
+    <!-- Robots (Allow Indexing) -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- Viewport for Mobile Responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#6366f1" />
+
+    <!-- Author (Optional, for Credibility) -->
+    <meta name="Aditya" content="DDI.AI Team" />
+
+    <!-- Favicon (Custom Icon from Previous Steps) -->
+    <link rel="icon" href="%PUBLIC_URL%/favi.ico" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+
+    <!-- Manifest for Progressive Web App (PWA) -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Open Graph Tags (For Social Media Sharing) -->
+    <meta property="og:title" content="DDI.AI: AI-Powered Drug Interaction Checker" />
+    <meta
+      property="og:description"
+      content="Predict drug safety with DDI.AI’s advanced AI models. The best tool for healthcare professionals to check drug interactions."
+    />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.png" />
+    <meta property="og:url" content="https://ddiaadi.vercel.app/" />
+    <meta property="og:type" content="website" />
+
+    <!-- Twitter Card Tags (For Twitter Sharing) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DDI.AI: AI-Powered Drug Interaction Checker" />
+    <meta
+      name="twitter:description"
+      content="Predict drug safety with DDI.AI’s advanced AI models. The best tool for healthcare professionals to check drug interactions."
+    />
+    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.png" />
+
+    <!-- Canonical URL (Avoid Duplicate Content Issues) -->
+    <link rel="canonical" href="https://ddiaadi.vercel.app/" />
+
+    <!-- Sitemap (Help Search Engines Crawl Your Site) -->
+    <link rel="sitemap" type="application/xml" href="%PUBLIC_URL%/sitemap.xml" />
+
+    <!-- Structured Data (Schema.org JSON-LD for Organization) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "DDI.AI",
+        "url": "https://ddiaadi.vercel.app/",
+        "logo": "https://ddiaadi.vercel.app/ddi-favicon.ico",
+        "description": "AI-powered drug interaction checker for healthcare professionals.",
+        "sameAs": [
+          "https://twitter.com/example",
+          "https://linkedin.com/company/example"
+        ]
+      }
+    </script>
+
+    <!-- Structured Data (Schema.org JSON-LD for WebApplication) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Aditya Kachhawa",
+        "jobTitle": "DDI.AI Founder",
+        "worksFor": {
+          "@type": "BJS Rampuria Jain College",
+          "name": "DDI.AI",
+          "url": "https://ddiaadi.vercel.app/"
+        }
+      }
+    </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- Noscript Fallback for SEO -->
+    <noscript>
+      <div>
+        <h1>DDI.AI: AI-Powered Drug Interaction Checker</h1>
+        <p>
+          DDI.AI is an AI-powered drug interaction checker for healthcare professionals. Predict drug safety with advanced AI models. JavaScript is required to use this app. Please enable JavaScript in your browser.
+        </p>
+      </div>
+    </noscript>
+
+    <!-- Root Div for React App -->
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>
